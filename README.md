@@ -127,6 +127,45 @@ alembic revision --autogenerate -m "add field X to Y"
 alembic upgrade head
 ```
 
+## Ejecución con Docker
+
+Requisitos: Docker Desktop o Docker Engine + docker compose.
+
+Archivos incluidos:
+- `Dockerfile` (imagen de la app)
+- `docker-compose.yml` (servicios app + Postgres)
+- `.dockerignore`
+
+Comandos básicos (desde la raíz del proyecto):
+
+```bash
+docker compose build
+docker compose up -d
+docker compose logs -f app
+```
+
+La app quedará en `http://localhost:8000` y la documentación en `http://localhost:8000/docs`.
+
+Variables de entorno en contenedor:
+- Por defecto, `docker-compose.yml` usa:
+  - `DATABASE_URL=postgresql+psycopg2://postgres:postgres@db:5432/analysat`
+  - `SECRET_KEY` configurable en tiempo de ejecución
+
+Ejemplo de override al levantar:
+
+```bash
+SECRET_KEY=$(openssl rand -hex 32) docker compose up -d --build
+```
+
+Logs y administración:
+
+```bash
+docker compose logs -f app
+docker compose logs -f db
+docker compose ps
+docker compose down
+```
+
 ## Estructura relevante
 
 ```
@@ -154,9 +193,6 @@ app/
 ## Scripts útiles
 
 ```bash
-# ejecutar server
 uvicorn app.main:app --reload
-
-# revisar dependencias desactualizadas (opcional)
 pip list --outdated
 ```
