@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlmodel import select, Session
 from fastapi.security import OAuth2PasswordRequestForm
 from app.db import get_session
@@ -9,6 +9,7 @@ from app.credentials.security import (
   verify_password,
   create_access_token
 )
+from app.credentials.dependencies import get_current_user
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -43,12 +44,22 @@ async def register_user(
 
 @router.post("/login", response_model=Token, status_code=status.HTTP_200_OK)
 async def login_user(
-  login_data: LoginRequest | None = None,
-  form_data: OAuth2PasswordRequestForm = Depends(),
+  request: Request,
   session: Session = Depends(get_session)
 ):
-  email = login_data.email if login_data is not None else form_data.username
-  password = login_data.password if login_data is not None else form_data.password
+  content_type = request.headers.get("content-type", "")
+  
+  if "application/json" in content_type:
+    body = await request.json()
+    email = body.get("email")
+    password = body.get("password")
+  else:
+    form_data = await request.form()
+    email = form_data.get("username")
+    password = form_data.get("password")
+  
+  if not email or not password:
+    raise HTTPException(status_code=400, detail="Se requiere email/username y password")
 
   query = select(User).where(User.email == email)
   result = session.exec(query)
@@ -63,3 +74,9 @@ async def login_user(
   access_token = create_access_token(data={ "user_id": str(user.id) })
 
   return Token(access_token=access_token, token_type="bearer")
+
+@router.get("/me", response_model=UserRead, status_code=status.HTTP_200_OK)
+async def get_current_user_info(
+  current_user: User = Depends(get_current_user)
+):
+  return current_user

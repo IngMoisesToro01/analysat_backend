@@ -189,6 +189,7 @@ app/
 
 - El middleware `AuthMiddleware` protege `'/projects'` y `'/tasks'` cuando no hay token.
 - Las entidades usan SQLModel; `ProjectCreate` y `TaskCreate` no aceptan `user_id` ni `created_at`; el servidor los asigna.
+- CORS configurado para `http://localhost:5173` (Vite/React frontend).
 
 ## Scripts útiles
 

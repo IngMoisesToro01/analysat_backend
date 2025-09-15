@@ -29,7 +29,9 @@ class AuthMiddleware(BaseHTTPMiddleware):
         request.state.user = None
 
     path: str = request.url.path or ""
-    if path.startswith(PROTECTED_PREFIXES) and request.state.user is None:
+    if (path.startswith(PROTECTED_PREFIXES) and 
+        request.state.user is None and 
+        request.method != "OPTIONS"):
       return JSONResponse(
         status_code=401,
         content={"detail": "Not authenticated"}
