@@ -1,0 +1,9 @@
+fastapi[standard]==0.115.3
+sqlmodel==0.0.8
+SQLAlchemy==1.4.49
+pydantic
+python-dotenv
+passlib[bcrypt]
+pyjwt==2.8.0
+
+

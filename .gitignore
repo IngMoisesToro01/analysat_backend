@@ -1,0 +1,38 @@
+analysat/
+env/
+venv/
+.venv/
+Scripts/
+Lib/
+Include/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# IDE/OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Config y secretos
+.env
+*.local
+*.secret
+*.bak
+
+# Logs y caches
+*.log
+logs/
+.coverage
+htmlcov/
+.pytest_cache/
+.cache/
